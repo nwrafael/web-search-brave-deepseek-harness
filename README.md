@@ -6,14 +6,6 @@ Use Brave Search as the web search backend of DeepSeek Harness. Search works wit
 
 DeepSeek Harness ships a web search tool, but its default backend requires a DeepSeek credential. This project adds a second backend that talks to the Brave Search API instead. You paste your Brave key once in the Plugins page and search just works.
 
-## Key features
-
-- Only needs a Brave API key, no DeepSeek credential
-- Settings editable from the Plugins page while the server runs
-- Key rotation takes effect on the next search, no restart
-- Clean results for the model: plain-text snippets and publication dates
-- Request limits enforced locally and redirects refused, so the key stays safe
-
 ## Installation
 
 ### 1. Get a key
