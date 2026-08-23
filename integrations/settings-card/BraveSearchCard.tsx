@@ -17,6 +17,25 @@ export type BraveSearchCardProps =
   & PropsLocale<'settings.plugins'>
   & InjectFace<BraveSearchCardFace>
 
+/** One plain-text option row: its state member and locale keys. */
+interface OptionRow {
+  readonly name: 'baseURL' | 'numResults' | 'country' | 'searchLang' | 'safeSearch' | 'freshness'
+  readonly id: string
+  readonly label: 'braveSearchBaseUrl' | 'braveSearchNumResults' | 'braveSearchCountry' | 'braveSearchLanguage' | 'braveSearchSafeSearch' | 'braveSearchFreshness'
+  readonly hint: 'braveSearchBaseUrlHint' | 'braveSearchNumResultsHint' | 'braveSearchCountryHint' | 'braveSearchLanguageHint' | 'braveSearchSafeSearchHint' | 'braveSearchFreshnessHint'
+  /** True when the value must parse as a number. */
+  readonly numeric?: boolean
+}
+
+const OPTION_ROWS: readonly OptionRow[] = [
+  { name: 'baseURL', id: 'endpoint', label: 'braveSearchBaseUrl', hint: 'braveSearchBaseUrlHint' },
+  { name: 'numResults', id: 'count', label: 'braveSearchNumResults', hint: 'braveSearchNumResultsHint', numeric: true },
+  { name: 'country', id: 'country', label: 'braveSearchCountry', hint: 'braveSearchCountryHint' },
+  { name: 'searchLang', id: 'language', label: 'braveSearchLanguage', hint: 'braveSearchLanguageHint' },
+  { name: 'safeSearch', id: 'safesearch', label: 'braveSearchSafeSearch', hint: 'braveSearchSafeSearchHint' },
+  { name: 'freshness', id: 'freshness', label: 'braveSearchFreshness', hint: 'braveSearchFreshnessHint' },
+]
+
 /**
  * Render the Brave search card.
  * @param props - locale copy, the card snapshot, and its form actions.
@@ -49,79 +68,22 @@ export function BraveSearchCard(props: BraveSearchCardProps) {
         stateLabel={state.apiKeyConfigured ? t('braveSearchApiKeySet') : t('braveSearchApiKeyUnset')}
         onEdit={(text) => { props.edit('apiKey', text) }}
       />
-      <ValueField
-        id="plugin-config-brave-search-endpoint"
-        label={t('braveSearchBaseUrl')}
-        hint={t('braveSearchBaseUrlHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        disabled={disabled}
-        {...state.baseURL}
-        onEdit={(text) => { props.edit('baseURL', text) }}
-        onReset={() => { props.resetField('baseURL') }}
-      />
-      <ValueField
-        id="plugin-config-brave-search-count"
-        label={t('braveSearchNumResults')}
-        hint={t('braveSearchNumResultsHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        numeric
-        disabled={disabled}
-        {...state.numResults}
-        onEdit={(text) => { props.edit('numResults', text) }}
-        onReset={() => { props.resetField('numResults') }}
-      />
-      <ValueField
-        id="plugin-config-brave-search-country"
-        label={t('braveSearchCountry')}
-        hint={t('braveSearchCountryHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        disabled={disabled}
-        {...state.country}
-        onEdit={(text) => { props.edit('country', text) }}
-        onReset={() => { props.resetField('country') }}
-      />
-      <ValueField
-        id="plugin-config-brave-search-language"
-        label={t('braveSearchLanguage')}
-        hint={t('braveSearchLanguageHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        disabled={disabled}
-        {...state.searchLang}
-        onEdit={(text) => { props.edit('searchLang', text) }}
-        onReset={() => { props.resetField('searchLang') }}
-      />
-      <ValueField
-        id="plugin-config-brave-search-safesearch"
-        label={t('braveSearchSafeSearch')}
-        hint={t('braveSearchSafeSearchHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        disabled={disabled}
-        {...state.safeSearch}
-        onEdit={(text) => { props.edit('safeSearch', text) }}
-        onReset={() => { props.resetField('safeSearch') }}
-      />
-      <ValueField
-        id="plugin-config-brave-search-freshness"
-        label={t('braveSearchFreshness')}
-        hint={t('braveSearchFreshnessHint')}
-        overriddenLabel={t('overridden')}
-        resetLabel={t('reset')}
-        invalidLabel={t('invalidNumber')}
-        disabled={disabled}
-        {...state.freshness}
-        onEdit={(text) => { props.edit('freshness', text) }}
-        onReset={() => { props.resetField('freshness') }}
-      />
+      {OPTION_ROWS.map(row => (
+        <ValueField
+          key={row.name}
+          id={`plugin-config-brave-search-${row.id}`}
+          label={t(row.label)}
+          hint={t(row.hint)}
+          overriddenLabel={t('overridden')}
+          resetLabel={t('reset')}
+          invalidLabel={t('invalidNumber')}
+          numeric={row.numeric === true}
+          disabled={disabled}
+          {...state[row.name]}
+          onEdit={(text) => { props.edit(row.name, text) }}
+          onReset={() => { props.resetField(row.name) }}
+        />
+      ))}
     </PluginCard>
   )
 }
